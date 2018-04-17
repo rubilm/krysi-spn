@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Scanner;
 
 /**
  * spn data
@@ -62,6 +63,9 @@ public class Main {
         }};
 
         calculateKeys(k);
+
+        Scanner scanner = new Scanner(System.in);
+        String clearText = scanner.next();
     }
 
     public static void calculateKeys(String k){
