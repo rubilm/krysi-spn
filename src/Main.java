@@ -85,4 +85,16 @@ public class Main {
             k3.append(k.charAt(i));
         }
     }
+
+    public static void key_xor(){
+
+    }
+
+    public static void sbox(){
+
+    }
+
+    public static void bitmermutation(){
+
+    }
 }
