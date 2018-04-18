@@ -61,7 +61,7 @@ public class Main {
             put(14, 11);
             put(15, 15);
         }};
-
+System.out.print("bitpermutation generated "+bitpermutation);
         calculateKeys(k);
 
         Scanner scanner = new Scanner(System.in);
@@ -96,5 +96,20 @@ public class Main {
 
     public static void bitmermutation(){
 
+    }
+    public static String fromASCIItoString(int[] input){
+      StringBuilder result = new StringBuilder();
+      for(int i = 0; i < input.length;i++) {
+          result.append(Character.toString((char) input[i]));
+      }
+      return result.toString();
+    }
+    public String intToBinary(int ascIIvalText){
+        String binary = Integer.toString(ascIIvalText,2);
+        return binary;
+    }
+    public int binaryToint(String binary){
+        int intval = Integer.parseInt(binary, 2);
+        return intval;
     }
 }
