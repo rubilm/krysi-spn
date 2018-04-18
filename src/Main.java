@@ -107,8 +107,6 @@ StringBuilder newBit = new StringBuilder();
           }
           String newBitreturn = newBit.toString();
 
-
-
 return newBitreturn;
     }
     public static String fromASCIItoString(int[] input){
