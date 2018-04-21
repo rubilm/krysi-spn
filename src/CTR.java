@@ -23,8 +23,8 @@ public class CTR {
 
     private int[] bitpermutation = {0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15};
 
-    private String k0, k1, k2, k3;
-    private String k0_, k1_, k2_, k3_;
+    private String k0, k1, k2, k3,k4;
+    private String k0_, k1_, k2_, k3_ ,k4_;
 
     public CTR(String k) {
        // test
@@ -50,10 +50,15 @@ public class CTR {
         for (int i = 12; i < 28; i++) {
             k3 += k.charAt(i);
         }
+        k4 = "";
+        for (int i = 16; i < 32; i++) {
+            k4 += k.charAt(i);
+        }
 
         k0_ = k3;
         k1_ = permutation(k2);
-        k2_ = permutation(k1);
+        k2_ = permutation(k3);
+        k4_ = permutation(k1);
         k3_ = k0;
     }
 
@@ -109,7 +114,11 @@ public class CTR {
         y = xor(y, k2);
 
         y = sBox(y);
+        y = permutation(y);
         y = xor(y, k3);
+
+        y = sBox(y);
+        y = xor(y, k4);
 
         return y;
 
@@ -119,8 +128,9 @@ public class CTR {
     public String encrypt(String chiffre) {
         String yMinus = chiffre.substring(0, 16);
         String result = "";
-        result = xor(xor(yMinus, k0), chiffre.substring(0, 16));
+        //result = xor(xor(yMinus, k0), chiffre.substring(0, 16));
 // TODO: weitermachen
+      result =  doSPN(chiffre);
         return result;
     }
 

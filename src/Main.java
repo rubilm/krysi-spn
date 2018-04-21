@@ -31,10 +31,12 @@ public class Main {
 
 
         CTR c = new CTR(K_TEST);
-        System.out.println(c.encrypt(X_TEST));
+        String encryption = c.encrypt(X_TEST);
+        System.out.println(encryption);
 
 
     }
+
 
 
     public static <T, E> Set<T> getKeysByValue(Map<T, E> map, E value) {
