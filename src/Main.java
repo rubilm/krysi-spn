@@ -20,20 +20,28 @@ public class Main {
     static int n = 4;
     static int m = 4;
     static int s = 32;
-    static String k = "00111010100101001101011000111111";
+
     static String X_TEST = "0001001010001111";
     static String Y_TEST = "1010111010110100";
     static String K_TEST = "00010001001010001000110000000000";
-    static String yMinus1 = "1111010010101001";
 
+    static String chiffre ="000001001101001000001011101110000000001010001" +
+            "111100011100111111101100000010100010100001110" +
+            "10000000010011011001110010101110110000";
+    static String k = "00111010100101001101011000111111";
 
     public static void main(String[] args) {
 
-
-        CTR c = new CTR(K_TEST);
-        String encryption = c.encrypt(X_TEST);
+        // Test encryption
+        CTR test = new CTR(K_TEST);
+        String encryption = test.encrypt(X_TEST);
         System.out.println(encryption);
+        System.out.println(Y_TEST.equals(encryption));
 
+        // decrypt chiffre
+        CTR ctr = new CTR(k);
+        String decryption = ctr.decrypt(chiffre);
+        System.out.println(decryption);
 
     }
 

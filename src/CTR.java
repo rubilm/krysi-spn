@@ -23,13 +23,15 @@ public class CTR {
 
     private int[] bitpermutation = {0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15};
 
-    private String k0, k1, k2, k3,k4;
-    private String k0_, k1_, k2_, k3_ ,k4_;
+    private String key;
+    private String yMin1;
+
+    private String k0, k1, k2, k3, k4;
+    private String k0_, k1_, k2_, k3_, k4_;
 
     public CTR(String k) {
-       // test
-        calcKeys(k);
-
+        // test
+        this.key = k;
 
     }
 
@@ -55,11 +57,11 @@ public class CTR {
             k4 += k.charAt(i);
         }
 
-        k0_ = k3;
-        k1_ = permutation(k2);
-        k2_ = permutation(k3);
-        k4_ = permutation(k1);
-        k3_ = k0;
+        k0_ = k4;
+        k1_ = permutation(k3);
+        k2_ = permutation(k2);
+        k3_ = permutation(k1);
+        k4_ = k0;
     }
 
     private String permutation(String X) {
@@ -100,49 +102,80 @@ public class CTR {
         return null;
     }
 
-    public String doSPN(String x) {
+
+    private String doSPNinv(String x) {
         String y = "";
-        y = xor(x, k0); //init
+        y = xor(x, k0_); //init
 
 
-        y = sBox(y);
+        y = sBoxInv(y);
         y = permutation(y);
-        y = xor(y, k1);
+        y = xor(y, k1_);
 
-        y = sBox(y);
+        y = sBoxInv(y);
         y = permutation(y);
-        y = xor(y, k2);
+        y = xor(y, k2_);
 
-        y = sBox(y);
+        y = sBoxInv(y);
         y = permutation(y);
-        y = xor(y, k3);
+        y = xor(y, k3_);
 
-        y = sBox(y);
-        y = xor(y, k4);
+        y = sBoxInv(y);
+        y = xor(y, k4_);
 
         return y;
 
     }
+    // TODO: no diffrent keys in CTR, x-1 and increment
 
 
     public String encrypt(String chiffre) {
-        String yMinus = chiffre.substring(0, 16);
+
+
         String result = "";
-        //result = xor(xor(yMinus, k0), chiffre.substring(0, 16));
-// TODO: weitermachen
-      result =  doSPN(chiffre);
+
         return result;
     }
 
-   /* public String decrypt(String chiffre, String k) {
+    public String decrypt(String chiffre) {
+        yMin1 = chiffre.substring(0, 16);
+
+        String[] block = new String[chiffre.length() / 16 - 1];
+
+        for (int i = 0; i < chiffre.length(); i += 16) {
+            block[i / 16] = chiffre.substring(i, i + 16);
+        }
+
+        String result = "";
 
 
-    }*/
+        for (int i = 0; i < block.length; i++) {
+            block[i] = xor(yMin1, k0_;
+
+            block[i] = sBox(block[i]);
+            block[i] = permutation(block[i]);
+            block[i] = xor(block[i], k1_);
+
+            block[i] = sBox(block[i]);
+            block[i] = permutation(block[i]);
+            block[i] = xor(block[i], k2_);
+
+            block[i] = sBox(block[i]);
+            block[i] = permutation(block[i]);
+            block[i] = xor(block[i], k3_);
+
+            block[i] = sBox(block[i]);
+            block[i] = xor(block[i], k4_);
+
+            plus1(yMin1);
+        }
+        return bitToText(result);
+    }
 
 
     private String xor(String x, String y) {
         String result = "";
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 32; i++) {
             if (x.charAt(i) != y.charAt(i))
                 result += '1';
             else
@@ -150,4 +183,27 @@ public class CTR {
         }
         return result;
     }
+
+    private void plus1(String bitstream) {
+        int bits = Integer.parseInt(bitstream, 2);
+        bits += 1;
+        bitstream = Integer.toString(bits);
+    }
+
+    private String bitToText(String bitstream) {
+        String[] ascii = new String[bitstream.length() / 4];
+
+        for (int i = 0; i < bitstream.length(); i += 4) {
+            ascii[i / 4] = bitstream.substring(i, i + 4);
+        }
+
+        String result = "";
+
+        for (int i = 0; i < ascii.length; i++) {
+            result += (char) Integer.parseInt(ascii[i], 2);
+        }
+
+        return result;
+    }
+
 }
