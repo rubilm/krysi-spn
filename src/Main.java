@@ -33,11 +33,11 @@ public class Main {
     public static void main(String[] args) {
 
         // Test encryption
-     /*   CTR test = new CTR(K_TEST);
+        CTR test = new CTR(K_TEST);
         String encryption = test.encrypt(X_TEST);
         System.out.println(encryption);
         System.out.println(Y_TEST.equals(encryption));
-*/
+
         // decrypt chiffre
         CTR ctr = new CTR(k);
         String decryption = ctr.decrypt(chiffre);

@@ -1,4 +1,3 @@
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class CTR {
@@ -34,6 +33,8 @@ public class CTR {
         // test
         this.key = k;
         calcKeys(key);
+
+
 
     }
 
@@ -144,14 +145,50 @@ public class CTR {
 
         String[] y = new String[chiffre.length() / 16];
         String[] res = new String[chiffre.length() / 16];
+        String[] block = new String[chiffre.length() / 16-1 ];
+        String chiffreFordecode = chiffre.substring(16,chiffre.length());
+String[] y_array = new String[chiffre.length()/16-1];
 
         for (int i = 0; i < chiffre.length(); i += 16) {
             y[i / 16] = chiffre.substring(i, i + 16);
+
+        for (int i = 0 ; i < chiffreFordecode.length()-16; i += 16) {
+            block[i/16] = chiffreFordecode.substring(i, i + 16);
+            y_array[i/16] = chiffreFordecode.substring(i, i + 16);
         }
 
         for (int i = 0; i < res.length; i++) {
             res[i] = doSPN(yMin1);
             plus1(yMin1);
+        StringBuilder result = new StringBuilder();
+
+
+        for (int i = 0; i < block.length; i++) {
+            block[i] = xor(yMin1, k0_);
+
+            block[i] = sBox(block[i]);
+            block[i] = permutation(block[i]);
+            block[i] = xor(block[i], k1_);
+
+            block[i] = sBox(block[i]);
+            block[i] = permutation(block[i]);
+            block[i] = xor(block[i], k2_);
+
+            block[i] = sBox(block[i]);
+            block[i] = permutation(block[i]);
+            block[i] = xor(block[i], k3_);
+
+            block[i] = sBox(block[i]);
+            block[i] = xor(block[i], k4_);
+
+           plus1(yMin1);
+            result.append(block[i]);
+
+        }
+        StringBuilder result_xoR_y = new StringBuilder();
+        for(int i = 0 ; i<block.length-1;i++){
+            result_xoR_y.append(xor(block[i],y_array[i]));
+
         }
 
         for(int i = 0; i< res.length;i++){
@@ -163,9 +200,19 @@ public class CTR {
             result += res[i];
         }
             return bitToText(result);
+        String result_withoutZero = removeonesAndZeros(result_xoR_y);
+        return bitToText(result_withoutZero);
     }
 
+private String removeonesAndZeros(StringBuilder bitstring){
+    while(bitstring.charAt(bitstring.length()-1)=='0'){
+        bitstring.deleteCharAt(bitstring.length()-1);
 
+    }
+    bitstring.deleteCharAt(bitstring.length()-1);
+
+    return bitstring.toString();
+}
     private String xor(String x, String y) {
         String result = "";
         for (int i = 0; i < 16; i++) {
@@ -186,13 +233,14 @@ public class CTR {
     private String bitToText(String bitstream) {
         String[] ascii = new String[bitstream.length() / 4];
 
-        for (int i = 0; i < bitstream.length(); i += 4) {
-            ascii[i / 4] = bitstream.substring(i, i + 4);
+        for (int i = 0; i <= bitstream.length()-8; i += 8) {
+            ascii[i / 8] = bitstream.substring(i, i + 8);
+
         }
 
         String result = "";
 
-        for (int i = 0; i < ascii.length; i++) {
+        for (int i = 0; i <= ascii.length; i++) {
             result += (char) Integer.parseInt(ascii[i], 2);
         }
 
