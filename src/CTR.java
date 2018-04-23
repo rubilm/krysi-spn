@@ -189,20 +189,20 @@ public class CTR {
 
         }
 
-     //   String result_withoutZero = removeonesAndZeros(result_xoR_y);
-        return bitToText(result);
+       String result_withoutZero = removeonesAndZeros(result);
+        return bitToText(result_withoutZero);
     }
 
-    private String removeonesAndZeros(StringBuilder bitstring) {
-
-        if(bitstring.charAt(bitstring.length()-1) == '0') {
-            while (bitstring.charAt(bitstring.length() - 1) == '0') {
-                bitstring.deleteCharAt(bitstring.length() - 1);
+    private String removeonesAndZeros(String bitstring) {
+StringBuilder removeZero = new StringBuilder(bitstring);
+        if(removeZero.charAt(removeZero.length()-1) == '0') {
+            while (removeZero.charAt(removeZero.length() - 1) == '0') {
+                removeZero.deleteCharAt(removeZero.length() - 1);
 
             }
-            bitstring.deleteCharAt(bitstring.length() - 1);
+            removeZero.deleteCharAt(removeZero.length() - 1);
         }
-        return bitstring.toString();
+        return removeZero.toString();
     }
 
     private String xor(String x, String y) {
