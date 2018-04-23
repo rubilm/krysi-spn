@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class CTR {
@@ -32,6 +33,7 @@ public class CTR {
     public CTR(String k) {
         // test
         this.key = k;
+        calcKeys(key);
 
     }
 
@@ -103,25 +105,25 @@ public class CTR {
     }
 
 
-    private String doSPNinv(String x) {
+    private String doSPN(String x) {
         String y = "";
-        y = xor(x, k0_); //init
+        y = xor(x, k0); //init
 
 
         y = sBoxInv(y);
         y = permutation(y);
-        y = xor(y, k1_);
+        y = xor(y, k1);
 
         y = sBoxInv(y);
         y = permutation(y);
-        y = xor(y, k2_);
+        y = xor(y, k2);
 
         y = sBoxInv(y);
         y = permutation(y);
-        y = xor(y, k3_);
+        y = xor(y, k3);
 
         y = sBoxInv(y);
-        y = xor(y, k4_);
+        y = xor(y, k4);
 
         return y;
 
@@ -140,46 +142,37 @@ public class CTR {
     public String decrypt(String chiffre) {
         yMin1 = chiffre.substring(0, 16);
 
-        String[] block = new String[chiffre.length() / 16 - 1];
+        String[] y = new String[chiffre.length() / 16];
+        String[] res = new String[chiffre.length() / 16];
 
         for (int i = 0; i < chiffre.length(); i += 16) {
-            block[i / 16] = chiffre.substring(i, i + 16);
+            y[i / 16] = chiffre.substring(i, i + 16);
+        }
+
+        for (int i = 0; i < res.length; i++) {
+            res[i] = doSPN(yMin1);
+            plus1(yMin1);
+        }
+
+        for(int i = 0; i< res.length;i++){
+            res[i] = xor(res[i], y[i]);
         }
 
         String result = "";
-
-
-        for (int i = 0; i < block.length; i++) {
-            block[i] = xor(yMin1, k0_;
-
-            block[i] = sBox(block[i]);
-            block[i] = permutation(block[i]);
-            block[i] = xor(block[i], k1_);
-
-            block[i] = sBox(block[i]);
-            block[i] = permutation(block[i]);
-            block[i] = xor(block[i], k2_);
-
-            block[i] = sBox(block[i]);
-            block[i] = permutation(block[i]);
-            block[i] = xor(block[i], k3_);
-
-            block[i] = sBox(block[i]);
-            block[i] = xor(block[i], k4_);
-
-            plus1(yMin1);
+        for(int i = 0; i < res.length; i++){
+            result += res[i];
         }
-        return bitToText(result);
+            return bitToText(result);
     }
 
 
     private String xor(String x, String y) {
         String result = "";
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 16; i++) {
             if (x.charAt(i) != y.charAt(i))
-                result += '1';
+                result += "1";
             else
-                result += '0';
+                result += "0";
         }
         return result;
     }
