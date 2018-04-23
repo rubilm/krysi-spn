@@ -72,6 +72,7 @@ public class CTR {
 
         for (int i = 0; i < 16; i++) {
             result.setCharAt(bitpermutation[i], x.charAt(i));
+
         }
         return result.toString();
     }
@@ -105,29 +106,54 @@ public class CTR {
     }
 
 
-    private String doSPN(String x) {
+    public String doSPN(String x) {
         String y = "";
         y = xor(x, k0); //init
 
 
-        y = sBoxInv(y);
+        y = sBox(y);
         y = permutation(y);
         y = xor(y, k1);
 
-        y = sBoxInv(y);
+        y = sBox(y);
         y = permutation(y);
         y = xor(y, k2);
 
-        y = sBoxInv(y);
+        y = sBox(y);
         y = permutation(y);
         y = xor(y, k3);
 
-        y = sBoxInv(y);
+        y = sBox(y);
         y = xor(y, k4);
 
         return y;
 
     }
+
+    private String doSPNInvert(String x) {
+        String y = "";
+        y = xor(x, k0_); //init
+
+
+        y = sBoxInv(y);
+        y = permutation(y);
+        y = xor(y, k1_);
+
+        y = sBoxInv(y);
+        y = permutation(y);
+        y = xor(y, k2_);
+
+        y = sBoxInv(y);
+        y = permutation(y);
+        y = xor(y, k3_);
+
+        y = sBoxInv(y);
+        y = xor(y, k4_);
+
+        return y;
+
+    }
+
     // TODO: no diffrent keys in CTR, x-1 and increment
 
 
@@ -142,46 +168,40 @@ public class CTR {
     public String decrypt(String chiffre) {
         yMin1 = chiffre.substring(0, 16);
 
-        String[] y = new String[chiffre.length() / 16];
-        String[] res = new String[chiffre.length() / 16];
-        String[] block = new String[chiffre.length() / 16 - 1];
         String chiffreFordecode = chiffre.substring(16, chiffre.length());
-        String[] y_array = new String[chiffre.length() / 16 - 1];
+        String[] y_array = new String[chiffreFordecode.length() / 16 ];
+        String[] res = new String[chiffreFordecode.length() / 16];
 
-        for (int i = 0; i < chiffreFordecode.length() - 16; i += 16) {
-            block[i / 16] = chiffreFordecode.substring(i, i + 16);
-            y_array[i / 16] = chiffreFordecode.substring(i, i + 16);
+
+        for (int i = 0; i < chiffreFordecode.length(); i += 16) {
+            int j = i/16;
+            y_array[i / 16]= chiffreFordecode.substring(i, i+16);
         }
 
         for (int i = 0; i < res.length; i++) {
             res[i] = doSPN(yMin1);
             yMin1 = plus1(yMin1);
         }
-        StringBuilder result_xoR_y = new StringBuilder();
-        for (int i = 0; i < block.length - 1; i++) {
-            result_xoR_y.append(xor(block[i], y_array[i]));
-
-        }
-
-        for (int i = 0; i < res.length; i++) {
-            res[i] = xor(res[i], y[i]);
-        }
 
         String result = "";
         for (int i = 0; i < res.length; i++) {
-            result += res[i];
+            result +=xor(res[i], y_array[i]);
+
         }
-        String result_withoutZero = removeonesAndZeros(result_xoR_y);
-        return bitToText(result_withoutZero);
+
+     //   String result_withoutZero = removeonesAndZeros(result_xoR_y);
+        return bitToText(result);
     }
 
     private String removeonesAndZeros(StringBuilder bitstring) {
-        while (bitstring.charAt(bitstring.length() - 1) == '0') {
+
+        if(bitstring.charAt(bitstring.length()-1) == '0') {
+            while (bitstring.charAt(bitstring.length() - 1) == '0') {
+                bitstring.deleteCharAt(bitstring.length() - 1);
+
+            }
             bitstring.deleteCharAt(bitstring.length() - 1);
-
         }
-        bitstring.deleteCharAt(bitstring.length() - 1);
-
         return bitstring.toString();
     }
 
@@ -198,21 +218,33 @@ public class CTR {
 
     private String plus1(String bitstream) {
         int bits = Integer.parseInt(bitstream, 2);
-        bits += 1;
-        return Integer.toString(bits);
+        bits =bits + 1;
+String bit = Integer.toString(bits,2);
+
+        int numberOfBits = String.valueOf(bit).length();
+        int numberOfLeadingZeroes = 16 - numberOfBits;
+        StringBuilder toSixteenBit = new StringBuilder();
+        if (numberOfLeadingZeroes > 0) {
+            for (int i = 0; i < numberOfLeadingZeroes; i++) {
+                toSixteenBit.append("0");
+            }
+        }
+        toSixteenBit.append(bit);
+        return toSixteenBit.toString();
     }
 
-    private String bitToText(String bitstream) {
-        String[] ascii = new String[bitstream.length() / 4];
 
-        for (int i = 0; i <= bitstream.length() - 8; i += 8) {
+    private String bitToText(String bitstream) {
+        String[] ascii = new String[bitstream.length() / 8];
+
+        for (int i = 0; i < bitstream.length(); i += 8) {
             ascii[i / 8] = bitstream.substring(i, i + 8);
 
         }
 
         String result = "";
 
-        for (int i = 0; i <= ascii.length; i++) {
+        for (int i = 0; i < ascii.length; i++) {
             result += (char) Integer.parseInt(ascii[i], 2);
         }
 
